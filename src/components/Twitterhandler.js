@@ -6,9 +6,9 @@ import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 
 function Twitterhandler() {
 
-    const characterLimit = 200;
+    const characterLimit = 100;
     let [characterLeft, setCharacterLeft] = useState(characterLimit)
-    // const [content, setContent] = useState("")
+    const [resultList, setResultList] = useState(null)
 
 
     function handleCharCount(input) {
@@ -20,6 +20,12 @@ function Twitterhandler() {
     function handleOnChange(e) {
         const input = e.target.value;
         handleCharCount(input);
+    }
+
+    function handleKeyDown(e) {
+        if (e.which === 50) {
+            console.log('@ pressed');
+        }
     }
 
     return (
@@ -39,6 +45,8 @@ function Twitterhandler() {
                     className="form-control ss_tweet"
                     id="exampleFormControlTextarea1"
                     rows="7"
+                    maxLength="100"
+                    onKeyDown={handleKeyDown}
                     onChange={handleOnChange}
                 />
             </div>
