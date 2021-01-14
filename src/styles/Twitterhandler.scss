@@ -12,8 +12,8 @@
 }
 
 .ss_user_image {
-    height: 75px;
-    width: 75px;
+    height: 50px;
+    width: 50px;
 }
 
 .twitter_handler {
@@ -28,7 +28,7 @@
 
 .icon_sprout {
     position: relative;
-    right: 45%;
+    right: 47%;
     bottom: 40px;
     margin: 5px;
     color: $ss-border-color;
@@ -38,4 +38,13 @@
     color: $text-color;
     position: relative;
     bottom: 30px;
+}
+
+.ss_user_list {
+    list-style: none;
+    // border: 1px solid red;
+}
+
+.ss_user_list li {
+    margin: 10px;
 }
