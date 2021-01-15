@@ -48,8 +48,8 @@ function Twitterhandler() {
 
     function handleReplaceText(e) {
         const clickedLi = e.target.innerHTML;
-        const n = inputef.current.value.split(" ");
-        let lastTypedHandler = n[n.length -1];
+        const n = inputef.current.value ? inputef.current.value.split(" ") : null;
+        const lastTypedHandler = n[n.length -1];
         inputef.current.value = inputef.current.value.replace(lastTypedHandler, clickedLi);
     }
 
