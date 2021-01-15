@@ -10,7 +10,6 @@ function Twitterhandler() {
 
     const characterLimit = 100;
     const seachURL = 'twitter/user/search'
-    const URL = '/'
     let [characterLeft, setCharacterLeft] = useState(characterLimit)
     const [userList, setUserList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -21,11 +20,8 @@ function Twitterhandler() {
 
     useEffect(() => {
         if (debouncedSearchTerm) {
-            // making API call only if it starts with @ and has minimum 2 chars followed
-            if (searchTerm.startsWith('@') && searchTerm.length >= 3) {
-                getUsers();
-                setShowUsers(true);
-            }
+            getUsers();
+            setShowUsers(true);
         } else {
             setUserList([])
         }
@@ -43,24 +39,37 @@ function Twitterhandler() {
         handleCharCount(input);
     }
 
-    function getInputValue() {
-        const query = inputef.current.value;
-        return query;
+    function getSearchString() {
+        const input = inputef.current.value;
+        const query = input.match(/@\S+/g);
+        const twitterHandler = query ? query.slice(-1)[0] : null;
+        return twitterHandler;
+    }
+
+    function handleReplaceText(e) {
+        const clickedLi = e.target.innerHTML;
+        const n = inputef.current.value.split(" ");
+        let lastTypedHandler = n[n.length -1];
+        inputef.current.value = inputef.current.value.replace(lastTypedHandler, clickedLi);
     }
 
     function getUsers() {
-        const user = getInputValue();
-        axios.get(`${seachURL}?username=${user}`)
-            .then(res => {
-                const userData = res.data.users;
-                setUserList(userData);
-                setShowUsers(true);
-            })
-            .catch(error => {
-                setUserList([]);
-                setShowUsers(false);
-                setError('Something went wrong', error)
-            })
+        const user = getSearchString();
+        if (user && (user.startsWith('@') && user.length >= 3)) {
+            axios.get(`${seachURL}?username=${user}`)
+                .then(res => {
+                    const userData = res.data.users;
+                    setUserList(userData);
+                    setShowUsers(true);
+                })
+                .catch(error => {
+                    setUserList([]);
+                    setShowUsers(false);
+                    setError('Something went wrong', error)
+                })
+        } else {
+            return;
+        }
     }
 
     return (
@@ -91,23 +100,22 @@ function Twitterhandler() {
 
             {
                 showUsers ?
-                <div className="row">
-                    <div className="w-100 ss_user_data">
-                        <ul className="ss_user_list float-left p-0 m-0 w-100">
-                            {
-                                
+                    <div className="row">
+                        <div className="w-100 ss_user_data">
+                            <ul className="ss_user_list float-left p-0 m-0 w-100">
+                                {
                                     userList?.map(user =>
-                                        <li key={user.id} className="text-left m-3">
+                                        <li key={user.id} className="text-left m-3" onClick={handleReplaceText}>
                                             <img src={user.profile_image_url_https} alt="random" className="ss_user_image m-0" /> <TwitterIcon className="ss_twitter__icon ml-2" />
                                             <strong><span>@{user.screen_name}</span></strong>
                                             <span className="ml-2 twitter_handler">{user.name}</span>
                                             <span className="float-right twitter_handler">{user.verified ? 'VERIFIED' : ''}</span>
                                         </li>
                                     )
-                            }
-                        </ul>
-                    </div>
-                </div> : null
+                                }
+                            </ul>
+                        </div>
+                    </div> : error
             }
         </div>
     )
