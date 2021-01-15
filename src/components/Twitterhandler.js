@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import axios from 'axios'
 import '../styles/Twitterhandler.scss';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
-import useDebounce from './debounce';
+import useDebounce from './Debounce';
 
 function Twitterhandler() {
 
@@ -19,6 +19,7 @@ function Twitterhandler() {
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
     useEffect(() => {
+        // debouncing the API request every 500ms 
         if (debouncedSearchTerm) {
             getUsers();
             setShowUsers(true);
@@ -28,13 +29,13 @@ function Twitterhandler() {
     }, [debouncedSearchTerm])
 
     function handleCharCount(input) {
-        const charCount = input.length;
+        const charCount = input ? input.length : 0;
         const charactersLeft = characterLimit - charCount;
         setCharacterLeft(charactersLeft);
     }
 
     function handleOnChange(e) {
-        const input = e.target.value;
+        const input = e && e.target ? e.target.value : '';
         setSearchTerm(input)
         handleCharCount(input);
     }
@@ -42,12 +43,13 @@ function Twitterhandler() {
     function getSearchString() {
         const input = inputef.current.value;
         const query = input.match(/@\S+/g);
+        // getting the last value of the array and setting that as the last handler that needs to be searched
         const twitterHandler = query ? query.slice(-1)[0] : null;
         return twitterHandler;
     }
 
     function handleReplaceText(e) {
-        const clickedLi = e.target.innerHTML;
+        const clickedLi = e.target && e.target.innerHTML ? e.target.innerHTML : '';
         const n = inputef.current.value ? inputef.current.value.split(" ") : null;
         const lastTypedHandler = n[n.length -1];
         inputef.current.value = inputef.current.value.replace(lastTypedHandler, clickedLi);
@@ -81,7 +83,7 @@ function Twitterhandler() {
                 <div className="col-sm-10 col-md-11 p-0">
                     <TwitterIcon className="ss_twitter__icon float-left" />
                     <strong><span className="float-left ml-2">Ankit Jain</span></strong>
-                    <span className="float-left ml-2 twitter_handler">@ajain27</span>
+                    <span className="float-left ml-2 twitter_handler">@a4ankit27</span>
                 </div>
             </div>
             <div className="row">
