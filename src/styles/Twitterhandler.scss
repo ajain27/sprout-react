@@ -42,9 +42,15 @@
 
 .ss_user_list {
     list-style: none;
-    // border: 1px solid red;
+}
+.ss_user_list li{
+    cursor: pointer;
+}
+.ss_user_list li:hover{
+    background-color: #f8f8f8;
 }
 
-.ss_user_list li {
-    margin: 10px;
+.ss_user_data {
+    height: 500px;
+    overflow-y: scroll;
 }

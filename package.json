@@ -13,8 +13,9 @@
     "react": "^16.2.0",
     "react-bootstrap": "^1.4.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "^2.0.5",
-    "twitter": "^1.7.1"
+    "react-scripts": "3.4.0",
+    "twitter": "^1.7.1",
+    "yarn": "^1.22.10"
   },
   "scripts": {
     "start": "react-scripts start",

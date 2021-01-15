@@ -11,9 +11,11 @@ function Twitterhandler() {
     const seachURL = 'twitter/user/search'
     const URL = '/'
     let [characterLeft, setCharacterLeft] = useState(characterLimit)
-    const [resultList, setResultList] = useState(null);
+    const [userList, setUserList] = useState([]);
     const [showUsers, setShowUsers] = useState(false);
+    const [error, setError] = useState('');
     const inputef = useRef(null);
+    let userData;
 
 
     function handleCharCount(input) {
@@ -42,8 +44,17 @@ function Twitterhandler() {
     function getUsers() {
         const user = getInputValue();
         axios.get(`${seachURL}?username=${user}`)
-            .then(res => console.log(res));
-        setShowUsers(true);
+            .then(res => {
+                const userData = res.data.users;
+                setUserList(userData);
+                setShowUsers(true);
+            })
+            .catch(error => {
+                setUserList([]);
+                setShowUsers(false);
+                setError('Something went wrong', error)
+            })
+
     }
 
     return (
@@ -52,8 +63,8 @@ function Twitterhandler() {
                 <div className="col-sm-2 col-md-1 p-0">
                     <img src="https://source.unsplash.com/random" alt="random" className="ss_user_image m-0 float-left" />
                 </div>
-                <div className="col-sm-10 col-md-11">
-                    <TwitterIcon className="ss_twitter__icon float-left ml-2" />
+                <div className="col-sm-10 col-md-11 p-0">
+                    <TwitterIcon className="ss_twitter__icon float-left" />
                     <strong><span className="float-left ml-2">Ankit Jain</span></strong>
                     <span className="float-left ml-2 twitter_handler">@ajain27</span>
                 </div>
@@ -75,18 +86,19 @@ function Twitterhandler() {
             {
                 // showUsers ?
                 <div className="row">
-                    <div className="w-100">
-                        {/* <h1>Results</h1> */}
-                        <ul className="ss_user_list float-left p-0 m-0">
-                            <li>
-                                <img src="https://source.unsplash.com/random" alt="random" className="ss_user_image m-0" />
-                                <TwitterIcon className="ss_twitter__icon ml-2" />
-                               <strong><span>@Ankit</span></strong>
-                               <span className="ml-2 twitter_handler">Ankit Jain</span>
-                            </li>
-                            {/* <li>
-                                <img src="https://source.unsplash.com/random" alt="random" className="ss_user_image m-0" />
-                            </li> */}
+                    <div className="w-100 ss_user_data">
+                        <ul className="ss_user_list float-left p-0 m-0 w-100">
+                            {
+                                showUsers ?
+                                    userList?.map(user =>
+                                        <li key={user.id} className="text-left m-3">
+                                            <img src={user.profile_image_url_https} alt="random" className="ss_user_image m-0" /> <TwitterIcon className="ss_twitter__icon ml-2" />
+                                            <strong><span>@{user.screen_name}</span></strong>
+                                            <span className="ml-2 twitter_handler">{user.name}</span>
+                                            <span className="float-right twitter_handler">{user.verified ? 'VERIFIED' : ''}</span>
+                                        </li>
+                                    ) : null
+                            }
                         </ul>
                     </div>
                 </div>
