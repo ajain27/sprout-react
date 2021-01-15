@@ -12,8 +12,8 @@
 }
 
 .ss_user_image {
-    height: 50px;
-    width: 50px;
+    height: 70px;
+    width: 70px;
 }
 
 .twitter_handler {
@@ -45,9 +45,12 @@
 }
 .ss_user_list li{
     cursor: pointer;
+    font-size: 15px;
+    transition: font-size .5s;
 }
 .ss_user_list li:hover{
     background-color: #f8f8f8;
+   font-size: 18px;
 }
 
 .ss_user_data {

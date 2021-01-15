@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import '../styles/Twitterhandler.scss';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import useDebounce from './debounce';
 
 function Twitterhandler() {
 
@@ -12,11 +13,23 @@ function Twitterhandler() {
     const URL = '/'
     let [characterLeft, setCharacterLeft] = useState(characterLimit)
     const [userList, setUserList] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [showUsers, setShowUsers] = useState(false);
     const [error, setError] = useState('');
     const inputef = useRef(null);
-    let userData;
+    const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            // making API call only if it starts with @ and has minimum 2 chars followed
+            if (searchTerm.startsWith('@') && searchTerm.length >= 3) {
+                getUsers();
+                setShowUsers(true);
+            }
+        } else {
+            setUserList([])
+        }
+    }, [debouncedSearchTerm])
 
     function handleCharCount(input) {
         const charCount = input.length;
@@ -26,18 +39,12 @@ function Twitterhandler() {
 
     function handleOnChange(e) {
         const input = e.target.value;
-        console.log(e);
-        if (input.length >= 3) {
-            getUsers();
-        }
+        setSearchTerm(input)
         handleCharCount(input);
-        const query = input;
-        return query;
     }
 
     function getInputValue() {
         const query = inputef.current.value;
-        console.log(query);
         return query;
     }
 
@@ -54,7 +61,6 @@ function Twitterhandler() {
                 setShowUsers(false);
                 setError('Something went wrong', error)
             })
-
     }
 
     return (
@@ -73,7 +79,7 @@ function Twitterhandler() {
                 <textarea
                     className="form-control ss_tweet"
                     id="exampleFormControlTextarea1"
-                    rows="7"
+                    rows="6"
                     maxLength="100"
                     ref={inputef}
                     onChange={handleOnChange}
@@ -84,12 +90,12 @@ function Twitterhandler() {
             <span className="character_count float-right">{characterLeft}</span>
 
             {
-                // showUsers ?
+                showUsers ?
                 <div className="row">
                     <div className="w-100 ss_user_data">
                         <ul className="ss_user_list float-left p-0 m-0 w-100">
                             {
-                                showUsers ?
+                                
                                     userList?.map(user =>
                                         <li key={user.id} className="text-left m-3">
                                             <img src={user.profile_image_url_https} alt="random" className="ss_user_image m-0" /> <TwitterIcon className="ss_twitter__icon ml-2" />
@@ -97,11 +103,11 @@ function Twitterhandler() {
                                             <span className="ml-2 twitter_handler">{user.name}</span>
                                             <span className="float-right twitter_handler">{user.verified ? 'VERIFIED' : ''}</span>
                                         </li>
-                                    ) : null
+                                    )
                             }
                         </ul>
                     </div>
-                </div>
+                </div> : null
             }
         </div>
     )
