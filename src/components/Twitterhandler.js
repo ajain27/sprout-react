@@ -101,7 +101,7 @@ function Twitterhandler() {
             </div>
             <div className="row">
                 <textarea
-                    className="form-control ss_tweet"
+                    className="form-control ss_tweet p-0"
                     id="exampleFormControlTextarea1"
                     rows="6"
                     maxLength="100"
