@@ -10,13 +10,16 @@ function Twitterhandler() {
 
     const characterLimit = 100;
     const seachURL = 'twitter/user/search'
-    let [characterLeft, setCharacterLeft] = useState(characterLimit)
+    let [characterLeft, setCharacterLeft] = useState(100)
     const [userList, setUserList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showUsers, setShowUsers] = useState(false);
     const [error, setError] = useState('');
-    const inputef = useRef(null);
+    const inputRef = useRef(null);
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+    const cache = useRef({});
+    Object.preventExtensions(cache);
 
     useEffect(() => {
         // debouncing the API request every 500ms 
@@ -41,34 +44,44 @@ function Twitterhandler() {
     }
 
     function getSearchString() {
-        const input = inputef.current.value;
-        const query = input.match(/@\S+/g);
-        // getting the last value of the array and setting that as the last handler that needs to be searched
-        const twitterHandler = query ? query.slice(-1)[0] : null;
+        const input = inputRef.current.value;
+        const extractdInputValue = input.split(' ');
+        console.log(extractdInputValue);
+        const lastWordTyped = extractdInputValue[extractdInputValue.length - 1];
+        const query = lastWordTyped.match(/@\S+/g);
+        const twitterHandler = query ? (query.slice(-1)[0]).trim() : null;
         return twitterHandler;
     }
 
     function handleReplaceText(e) {
         const clickedLi = e.target && e.target.innerHTML ? e.target.innerHTML : '';
-        const n = inputef.current.value ? inputef.current.value.split(" ") : null;
-        const lastTypedHandler = n[n.length -1];
-        inputef.current.value = inputef.current.value.replace(lastTypedHandler, clickedLi);
+        const n = inputRef.current.value ? inputRef.current.value.split(" ") : null;
+        const lastTypedHandler = n[n.length - 1];
+        inputRef.current.value = inputRef.current.value.replace(lastTypedHandler, clickedLi);
     }
 
-    function getUsers() {
+    const getUsers = async () => {
         const user = getSearchString();
         if (user && (user.startsWith('@') && user.length >= 3)) {
-            axios.get(`${seachURL}?username=${user}`)
-                .then(res => {
-                    const userData = res.data.users;
-                    setUserList(userData);
-                    setShowUsers(true);
-                })
-                .catch(error => {
-                    setUserList([]);
-                    setShowUsers(false);
-                    setError('Something went wrong', error)
-                })
+            const url = `${seachURL}?username=${user}`;
+            if (cache.current[url]) {
+                const userData = cache.current[url];
+                setUserList(userData);
+                setShowUsers(true);
+            } else {
+                axios.get(url)
+                    .then(res => {
+                        const userData = res.data.users;
+                        cache.current[url] = JSON.parse(JSON.stringify(res.data.users));
+                        setUserList(userData);
+                        setShowUsers(true);
+                    })
+                    .catch(error => {
+                        setUserList([]);
+                        setShowUsers(false);
+                        setError('Something went wrong', error)
+                    })
+            }
         } else {
             return;
         }
@@ -92,30 +105,29 @@ function Twitterhandler() {
                     id="exampleFormControlTextarea1"
                     rows="6"
                     maxLength="100"
-                    ref={inputef}
+                    ref={inputRef}
                     onChange={handleOnChange}
                 />
+                <TrackChangesIcon className="icon_sprout" />
+                <PhotoCameraIcon className="icon_sprout" />
             </div>
-            <TrackChangesIcon className="icon_sprout" />
-            <PhotoCameraIcon className="icon_sprout" />
             <span className="character_count float-right">{characterLeft}</span>
-
             {
                 showUsers ?
                     <div className="row">
                         <div className="w-100 ss_user_data">
                             <ul className="ss_user_list float-left p-0 m-0 w-100">
                                 {
-                                    userList?.map(user =>
+                                   userList ? userList.map(user =>
                                         <li key={user.id} className="text-left m-3" onClick={handleReplaceText}>
                                             <img src={user.profile_image_url_https} alt="random" className="ss_user_image m-0" /> <TwitterIcon className="ss_twitter__icon ml-2" />
                                             <strong><span>@{user.screen_name}</span></strong>
                                             <span className="ml-2 twitter_handler">{user.name}</span>
                                             <span className="float-right twitter_handler">{user.verified ? 'VERIFIED' : ''}</span>
                                         </li>
-                                    )
+                                    ): null
                                 }
-                            </ul>
+                            </ul> 
                         </div>
                     </div> : error
             }
