@@ -46,7 +46,6 @@ function Twitterhandler() {
     function getSearchString() {
         const input = inputRef.current.value;
         const extractdInputValue = input.split(' ');
-        console.log(extractdInputValue);
         const lastWordTyped = extractdInputValue[extractdInputValue.length - 1];
         const query = lastWordTyped.match(/@\S+/g);
         const twitterHandler = query ? (query.slice(-1)[0]).trim() : null;
