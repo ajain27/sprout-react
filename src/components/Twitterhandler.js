@@ -31,7 +31,7 @@ function Twitterhandler() {
             setUserList([])
             setShowUsers(false);
         }
-    }, [debouncedSearchTerm])
+    }, [debouncedSearchTerm]) // dependent on th search term
 
     function handleCharCount(input) {
         const charCount = input ? input.length : 0;
@@ -50,6 +50,7 @@ function Twitterhandler() {
         const extractdInputValue = input.split(' ');
         const lastWordTyped = extractdInputValue[extractdInputValue.length - 1];
         const query = lastWordTyped.match(/@\S+/g);
+        // getting the last typed handler which matched the regex => starting with @
         const twitterHandler = query ? (query.slice(-1)[0]).trim() : null;
         return twitterHandler;
     }
@@ -57,6 +58,7 @@ function Twitterhandler() {
     function handleReplaceText(e) {
         const clickedLi = e.target && e.target.innerHTML ? e.target.innerHTML : '';
         const n = inputRef.current.value ? inputRef.current.value.split(" ") : null;
+        // Geting the last word of the string
         const lastTypedHandler = n[n.length - 1];
         inputRef.current.value = inputRef.current.value.replace(lastTypedHandler, clickedLi);
         inputRef.current.focus();
