@@ -8,7 +8,7 @@ import useDebounce from './Debounce';
 
 function Twitterhandler() {
 
-    const characterLimit = 100;
+    const characterLimit = 140;
     const seachURL = 'twitter/user/search'
     let [characterLeft, setCharacterLeft] = useState(140)
     const [userList, setUserList] = useState([]);
@@ -29,6 +29,7 @@ function Twitterhandler() {
             setShowUsers(true);
         } else {
             setUserList([])
+            setShowUsers(false);
         }
     }, [debouncedSearchTerm])
 
@@ -121,7 +122,7 @@ function Twitterhandler() {
             <span className="character_count float-right">{characterLeft}</span>
             {
                 showUsers ?
-                    <div className="row">
+                    <div className="row m-0 w-100">
                         <div className="w-100 ss_user_data">
                             <ul className="ss_user_list float-left p-0 m-0 w-100" tabIndex="0">
                                 {
