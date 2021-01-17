@@ -100,7 +100,7 @@ function Twitterhandler() {
             </div>
             <div className="row">
                 <textarea
-                    className="form-control ss_tweet p-0"
+                    className="form-control ss_tweet"
                     id="exampleFormControlTextarea1"
                     rows="6"
                     maxLength="100"
@@ -117,16 +117,16 @@ function Twitterhandler() {
                         <div className="w-100 ss_user_data">
                             <ul className="ss_user_list float-left p-0 m-0 w-100">
                                 {
-                                   userList ? userList.map(user =>
+                                    userList ? userList.map(user =>
                                         <li key={user.id} className="text-left m-3" onClick={handleReplaceText}>
                                             <img src={user.profile_image_url_https} alt="random" className="ss_user_image m-0" /> <TwitterIcon className="ss_twitter__icon ml-2" />
                                             <strong><span>@{user.screen_name}</span></strong>
                                             <span className="ml-2 twitter_handler">{user.name}</span>
                                             <span className="float-right twitter_handler">{user.verified ? 'VERIFIED' : ''}</span>
                                         </li>
-                                    ): null
+                                    ) : null
                                 }
-                            </ul> 
+                            </ul>
                         </div>
                     </div> : error
             }
