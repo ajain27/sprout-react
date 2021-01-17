@@ -10,7 +10,7 @@ function Twitterhandler() {
 
     const characterLimit = 100;
     const seachURL = 'twitter/user/search'
-    let [characterLeft, setCharacterLeft] = useState(100)
+    let [characterLeft, setCharacterLeft] = useState(140)
     const [userList, setUserList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showUsers, setShowUsers] = useState(false);
@@ -22,6 +22,7 @@ function Twitterhandler() {
     Object.preventExtensions(cache);
 
     useEffect(() => {
+        inputRef.current.focus();
         // debouncing the API request every 500ms 
         if (debouncedSearchTerm) {
             getUsers();
@@ -57,6 +58,13 @@ function Twitterhandler() {
         const n = inputRef.current.value ? inputRef.current.value.split(" ") : null;
         const lastTypedHandler = n[n.length - 1];
         inputRef.current.value = inputRef.current.value.replace(lastTypedHandler, clickedLi);
+        inputRef.current.focus();
+    }
+
+    function handleKeyboardEvent(e) {
+        if(e.which === 13) {
+            handleReplaceText(e);
+        }
     }
 
     const getUsers = async () => {
@@ -103,7 +111,7 @@ function Twitterhandler() {
                     className="form-control ss_tweet"
                     id="exampleFormControlTextarea1"
                     rows="6"
-                    maxLength="100"
+                    maxLength="140"
                     ref={inputRef}
                     onChange={handleOnChange}
                 />
@@ -115,12 +123,12 @@ function Twitterhandler() {
                 showUsers ?
                     <div className="row">
                         <div className="w-100 ss_user_data">
-                            <ul className="ss_user_list float-left p-0 m-0 w-100">
+                            <ul className="ss_user_list float-left p-0 m-0 w-100" tabIndex="0">
                                 {
                                     userList ? userList.map(user =>
-                                        <li key={user.id} className="text-left m-3" onClick={handleReplaceText}>
+                                        <li key={user.id} className="text-left m-3" onClick={handleReplaceText}  onKeyDown={handleKeyboardEvent}>
                                             <img src={user.profile_image_url_https} alt="random" className="ss_user_image m-0" /> <TwitterIcon className="ss_twitter__icon ml-2" />
-                                            <strong><span>@{user.screen_name}</span></strong>
+                                            <strong><span tabIndex="1">@{user.screen_name}</span></strong>
                                             <span className="ml-2 twitter_handler">{user.name}</span>
                                             <span className="float-right twitter_handler">{user.verified ? 'VERIFIED' : ''}</span>
                                         </li>
