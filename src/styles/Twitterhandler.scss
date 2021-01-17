@@ -56,3 +56,9 @@
     height: 500px;
     overflow-y: scroll;
 }
+
+textarea:focus {
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: 2px 2px 12px 2px #888888 !important;
+}
