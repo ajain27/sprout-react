@@ -18,8 +18,7 @@ function Twitterhandler() {
     const inputRef = useRef(null);
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-    const cache = useRef({});
-    Object.preventExtensions(cache);
+    const cache = useRef({}); // object to cache the same api call. 
 
     useEffect(() => {
         inputRef.current.focus();
@@ -74,6 +73,7 @@ function Twitterhandler() {
         const user = getSearchString();
         if (user && (user.startsWith('@') && user.length >= 3)) {
             const url = `${seachURL}?username=${user}`;
+            // Check if the same pai request exists in cache
             if (cache.current[url]) {
                 const userData = cache.current[url];
                 setUserList(userData);
@@ -82,6 +82,7 @@ function Twitterhandler() {
                 axios.get(url)
                     .then(res => {
                         const userData = res.data.users;
+                        // Adding the new request to cache to prevent duplicates in future api calls.
                         cache.current[url] = JSON.parse(JSON.stringify(res.data.users));
                         setUserList(userData);
                         setShowUsers(true);
