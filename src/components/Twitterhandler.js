@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState, useRef } from 'react'
+import { getTwitterUsers, returnSearchURL } from '../adapters/pageAdapter/twitterAdapter'
 import '../styles/Twitterhandler.scss';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
@@ -72,14 +72,14 @@ function Twitterhandler() {
     const getUsers = async () => {
         const user = getSearchString();
         if (user && (user.startsWith('@') && user.length >= 3)) {
-            const url = `${seachURL}?username=${user}`;
+            const url = returnSearchURL(user);
             // Check if the same pai request exists in cache
             if (cache.current[url]) {
                 const userData = cache.current[url];
                 setUserList(userData);
                 setShowUsers(true);
             } else {
-                axios.get(url)
+                getTwitterUsers(user)
                     .then(res => {
                         const userData = res.data.users;
                         // Adding the new request to cache to prevent duplicates in future api calls.
