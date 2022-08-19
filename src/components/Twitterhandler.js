@@ -7,9 +7,7 @@ import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import useDebounce from './Debounce';
 
 function Twitterhandler() {
-
     const characterLimit = 140;
-    const seachURL = 'twitter/user/search'
     let [characterLeft, setCharacterLeft] = useState(140)
     const [userList, setUserList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
